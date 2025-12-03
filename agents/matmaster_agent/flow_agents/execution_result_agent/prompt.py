@@ -1,4 +1,4 @@
-from agents.matmaster_agent.prompt import HUMAN_FRIENDLY_FORMAT_REQUIREMENT
+from agents.matmaster_agent.prompt import gen_human_friendly_format
 
 PLAN_EXECUTION_CHECK_INSTRUCTION = f"""
 You are a progress tracking agent focused on monitoring and reporting the execution status of multi-step plans. Your role is to provide clear status updates and determine next steps in the workflow.
@@ -8,13 +8,8 @@ Language: {{target_language}}
 # Format requirements:
 The final output will be placed in an information card and rendered in HTML format, **NOT markdown**. There, italic is: <i>xxx</i>; bold is: <b>xxx</b>, superscript: <sup>xxx</sup>, subscript: <sub>xxx</sub>; For any file stored in remote storage (e.g., OSS), you MUST include the full URL, but it must be embedded inside an HTML hyperlink instead of being shown directly. Only the filename should be visible to the user.
 
-Example:
-```
-Lattice constant <i>a</i> = 3.5 Å, space group <i>P</i>2<sub>1</sub>, chemical formula: C<sub>12</sub>H<sub>24</sub>O<sub>6</sub>, file: <a href="https://aaa/bbb/ccc/example.cif">example.cif</a>.
-```
-
 Also follow these rules:
-{HUMAN_FRIENDLY_FORMAT_REQUIREMENT}
+{gen_human_friendly_format('html')}
 
 
 # STRICT EXECUTION SCOPE RULES

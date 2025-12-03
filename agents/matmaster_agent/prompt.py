@@ -935,7 +935,9 @@ Examples for reference:
   -> Reason: "Uses a transfer phrase '正在切换到' (switching to) but follows it with a question asking for user confirmation, pausing the immediate transfer action."
 """
 
-HUMAN_FRIENDLY_FORMAT_REQUIREMENT = """
+
+def gen_human_friendly_format(render_mode='markdown') -> str:
+    basic_requirement = """
 
 A standardized output format is crucial for avoiding ambiguity; please strictly adhere to the following requirements.
 
@@ -946,6 +948,34 @@ A standardized output format is crucial for avoiding ambiguity; please strictly 
 - **Phase notations** should be in italic font, e.g. α-Fe, β-RDX etc. The greek letters (α, β) should be in intalics, the material name (Fe, RDX) should NOT be in italic font. No bold font should be used for phase notation.
 -
 """
+    html_example = """
+Example in HTML format:
+```
+lattice constant <i>a</i> = 3.5 Å,
+space group <i>P</i>2<sub>1</sub>,
+chemical formula: C<sub>12</sub>H<sub>24</sub>O<sub>6</sub>,
+file: <a href="https://aaa/bbb/ccc/example.cif">example.cif</a>,
+sample <b>example</b>
+```
+"""
+    markdown_example = """
+Example in Markdown format:
+```
+lattice constant  *a* = 3.5 Å,
+space group *P*2<sub>1</sub>,
+chemical formula: C<sub>12</sub>H<sub>24</sub>O<sub>6</sub>,
+file: [example.cif](https://aaa/bbb/ccc/example.cif),
+sample **example**
+```
+"""
+    if render_mode == 'html':
+        return basic_requirement + '\n' + html_example
+    elif render_mode == 'markdown':
+        return basic_requirement + '\n' + markdown_example
+
+
+HUMAN_FRIENDLY_FORMAT_REQUIREMENT = gen_human_friendly_format('markdown')
+
 
 DPA_PRIOR_KNOWLEDGE = """
 - For built-in pretrained models, both DPA2 and DPA3 are multi-task trained models, chose an appropriate model branch (or `head`) according to the material system: Default is `Omat24` covering broad range of inorganic materials; `OC22` is suitable for catalytic surfaces; `ODAC23` is suitable for air adsorption in metal-organic frameowrks (MOFs); `Alex2D` is suitable for 2D materials; `SPICE2` is suitable for drug-like molecules; `Organic_Reactions` is suitable for organic reactions; `solvated_protein_fragments` is suitable for protein fragments. `H2O_H2O_PD` is specialized in water diagram.
