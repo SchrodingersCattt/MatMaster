@@ -262,13 +262,7 @@ from agents.matmaster_agent.sub_agents.vaspkit_agent.agent import (
 from agents.matmaster_agent.sub_agents.vaspkit_agent.constant import (
     VASPKIT_AGENT_NAME,
 )
-from agents.matmaster_agent.sub_agents.visualizer_agent.agent import (
-    VisualizerAgent,
-    visualizer_toolset,
-)
-from agents.matmaster_agent.sub_agents.visualizer_agent.constant import (
-    VisualizerAgentName,
-)
+from agents.matmaster_agent.sub_agents.built_in_agent.plotting_agent.agent import PlottingAgent
 from agents.matmaster_agent.sub_agents.XRD_agent.agent import (
     XRDAgent,
     xrd_toolset,
@@ -306,7 +300,6 @@ ALL_TOOLSET_DICT = {
     'superconductor_toolset': superconductor_toolset,
     'thermoelectric_toolset': thermoelectric_toolset,
     'traj_analysis_toolset': traj_analysis_toolset,
-    'visualizer_toolset': visualizer_toolset,
     'lammps_toolset': lammps_toolset,
     'vaspkit_toolset': vaspkit_toolset,
     'science_navigator_toolset': science_navigator_toolset,
@@ -349,7 +342,7 @@ AGENT_CLASS_MAPPING = {
     TASK_ORCHESTRATOR_AGENT_NAME: TaskOrchestratorAgent,
     ThermoelectricAgentName: ThermoAgent,
     TrajAnalysisAgentName: TrajAnalysisAgent,
-    VisualizerAgentName: VisualizerAgent,
+    "plotting_agent": PlottingAgent,
     VASPKIT_AGENT_NAME: VASPKITAgent,
     ConvexHullAgentName: ConvexHullAgent,
     NMR_AGENT_NAME: NMRAgent,
@@ -393,7 +386,7 @@ class MatMasterSubAgentsEnum(str, Enum):
     TaskOrchestratorAgent = TASK_ORCHESTRATOR_AGENT_NAME
     TrajAnalysisAgent = TrajAnalysisAgentName
     FinetuneDPAAgent = FinetuneDPAAgentName
-    VisualizerAgent = VisualizerAgentName
+    PlottingAgent = "plotting_agent"
     VASPKITAgent = VASPKIT_AGENT_NAME
     ConvexHullAgent = ConvexHullAgentName
     NMRAgent = NMR_AGENT_NAME

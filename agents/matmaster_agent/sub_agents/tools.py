@@ -7,6 +7,8 @@ from agents.matmaster_agent.prompt import (
     STRUCTURE_BUILDING_SAVENAME,
 )
 from agents.matmaster_agent.sub_agents.ABACUS_agent.constant import ABACUS_AGENT_NAME
+
+from agents.matmaster_agent.sub_agents.ABACUS_agent.constant import ABACUS_AGENT_NAME
 from agents.matmaster_agent.sub_agents.apex_agent.constant import ApexAgentName
 from agents.matmaster_agent.sub_agents.built_in_agent.file_parse_agent.constant import (
     FILE_PARSE_AGENT_NAME,
@@ -158,9 +160,6 @@ from agents.matmaster_agent.sub_agents.TPD_agent.constant import (
 )
 from agents.matmaster_agent.sub_agents.traj_analysis_agent.constant import (
     TrajAnalysisAgentName,
-)
-from agents.matmaster_agent.sub_agents.visualizer_agent.constant import (
-    VisualizerAgentName,
 )
 from agents.matmaster_agent.sub_agents.XRD_agent.constant import (
     XRD_AGENT_NAME,
@@ -1413,30 +1412,15 @@ ALL_TOOLS = {
         'alternative': [],
         'self_check': False,
     },
-    'visualize_data_from_file': {
-        'belonging_agent': VisualizerAgentName,
+    'execute_plotting_task': {
+        'belonging_agent': 'plotting_agent',  # UPDATED: Points to the new agent name
         'scene': [SceneEnum.VISUALIZE_DATA, SceneEnum.UNIVERSAL],
         'description': (
-            'What it does: Create plots from data files.\n'
-            'When to use: Visualize CSV/Excel/JSON data.\n'
-            'Prerequisites / Inputs: Data file URL.\n'
-            'Outputs: Plots.\n'
-            'Cannot do / Limits: Data files only.\n'
-            'Cost / Notes: Low.'
-        ),
-        'alternative': [],
-        'bypass_confirmation': True,
-        'self_check': False,
-    },
-    'visualize_data_from_prompt': {
-        'belonging_agent': VisualizerAgentName,
-        'scene': [SceneEnum.VISUALIZE_DATA, SceneEnum.UNIVERSAL],
-        'description': (
-            'What it does: Create plots from prompts.\n'
-            'When to use: Quick visualize data embedded in prompt.\n'
-            'Outputs: Plots.\n'
-            'Cannot do / Limits: Plot requests with valid data only.\n'
-            'Cost / Notes: Low.'
+            'What it does: Executes Python code to extract data and generate professional scientific plots.\n'
+            'When to use: When user needs to visualize data from a local file, complex data structure, or data provided in the chat.\n'
+            'Outputs: Image file path and execution logs.\n'
+            'Cannot do / Limits: Cannot handle raw files without an accompanying extractor script.\n'
+            'Cost / Notes: High reliability with self-correction capability.'
         ),
         'alternative': [],
         'bypass_confirmation': True,
