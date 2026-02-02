@@ -71,9 +71,6 @@ from agents.matmaster_agent.flow_agents.plan_make_agent.schema import (
 from agents.matmaster_agent.flow_agents.report_agent.prompt import (
     get_report_instruction,
 )
-from agents.matmaster_agent.flow_agents.scene_agent.constant import SCENE_AGENT
-from agents.matmaster_agent.flow_agents.scene_agent.prompt import SCENE_INSTRUCTION
-from agents.matmaster_agent.flow_agents.scene_agent.schema import SceneSchema
 from agents.matmaster_agent.flow_agents.schema import FlowStatusEnum
 from agents.matmaster_agent.flow_agents.step_title_agent.callback import (
     filter_llm_contents,
@@ -108,7 +105,6 @@ from agents.matmaster_agent.prompt import (
 )
 from agents.matmaster_agent.services.icl import (
     expand_input_examples,
-    scene_tags_from_examples,
     select_examples,
     select_update_examples,
     toolchain_from_examples,
@@ -143,7 +139,6 @@ logger = logging.getLogger(__name__)
 logger.addFilter(PrefixFilter(MATMASTER_AGENT_NAME))
 logger.setLevel(logging.INFO)
 
-
 class MatMasterFlowAgent(LlmAgent):
     @model_validator(mode='after')
     def after_init(self):
@@ -176,15 +171,6 @@ class MatMasterFlowAgent(LlmAgent):
             instruction=EXPAND_INSTRUCTION,
             output_schema=ExpandSchema,
             state_key=EXPAND,
-        )
-
-        self._scene_agent = DisallowTransferAndContentLimitSchemaAgent(
-            name=SCENE_AGENT,
-            model=MatMasterLlmConfig.tool_schema_model,
-            description='把用户的问题划分到特定的场景',
-            instruction=SCENE_INSTRUCTION,
-            output_schema=SceneSchema,
-            state_key='single_scenes',
         )
 
         self._plan_make_agent = PlanMakeAgent(
@@ -226,7 +212,6 @@ class MatMasterFlowAgent(LlmAgent):
             self.handle_upload_agent,
             self.intent_agent,
             self.expand_agent,
-            self.scene_agent,
             self.plan_make_agent,
             self.analysis_agent,
             self.report_agent,
@@ -253,11 +238,6 @@ class MatMasterFlowAgent(LlmAgent):
     @property
     def expand_agent(self) -> LlmAgent:
         return self._expand_agent
-
-    @computed_field
-    @property
-    def scene_agent(self) -> LlmAgent:
-        return self._scene_agent
 
     @computed_field
     @property
@@ -359,30 +339,10 @@ class MatMasterFlowAgent(LlmAgent):
             CURRENT_ENV,
             logger,
         )
-        SCENE_EXAMPLES_PROMPT = scene_tags_from_examples(icl_update_examples)
         TOOLCHAIN_EXAMPLES_PROMPT = toolchain_from_examples(icl_update_examples)
-        logger.info(f'{ctx.session.id} {SCENE_EXAMPLES_PROMPT}')
         logger.info(f'{ctx.session.id} {TOOLCHAIN_EXAMPLES_PROMPT}')
 
-        return UPDATE_USER_CONTENT, SCENE_EXAMPLES_PROMPT, TOOLCHAIN_EXAMPLES_PROMPT
-
-    async def _run_scene_agent(
-        self, ctx: InvocationContext, UPDATE_USER_CONTENT, SCENE_EXAMPLES_PROMPT
-    ) -> AsyncGenerator[Event, None]:
-        # 2. 动态构造 instruction
-        self.scene_agent.instruction = (
-            SCENE_INSTRUCTION + UPDATE_USER_CONTENT + SCENE_EXAMPLES_PROMPT
-        )
-        # 3. 运行 Agent
-        async for scene_event in self.scene_agent.run_async(ctx):
-            yield scene_event
-
-        # 4. 将之前的场景带到后面的会话中去
-        before_scenes = ctx.session.state['scenes']
-        single_scene = ctx.session.state['single_scenes']['type']
-        scenes = list(set(before_scenes + single_scene + ['universal']))
-        logger.info(f'{ctx.session.id} scenes = {scenes}')
-        yield update_state_event(ctx, state_delta={'scenes': copy.deepcopy(scenes)})
+        return UPDATE_USER_CONTENT, TOOLCHAIN_EXAMPLES_PROMPT
 
     async def _run_plan_make_agent(
         self, ctx: InvocationContext, UPDATE_USER_CONTENT, TOOLCHAIN_EXAMPLES_PROMPT
@@ -393,7 +353,7 @@ class MatMasterFlowAgent(LlmAgent):
         else:
             plan_title = i18n.t('PlanMake')
 
-        scenes = ctx.session.state['scenes']
+        scenes = []  # Scene agent removed; use full tool list
         available_tools = get_tools_list(ctx, scenes)
         if not available_tools:
             available_tools = ALL_AGENT_TOOLS_LIST
@@ -717,16 +677,10 @@ class MatMasterFlowAgent(LlmAgent):
         async for _expand_event in self._run_expand_agent(ctx):
             yield _expand_event
 
-        # 构造 UPDATE_USER_CONTENT, SCENE_EXAMPLES_PROMPT, TOOLCHAIN_EXAMPLES_PROMPT
-        UPDATE_USER_CONTENT, SCENE_EXAMPLES_PROMPT, TOOLCHAIN_EXAMPLES_PROMPT = (
+        # 构造 UPDATE_USER_CONTENT, TOOLCHAIN_EXAMPLES_PROMPT
+        UPDATE_USER_CONTENT, TOOLCHAIN_EXAMPLES_PROMPT = (
             await self._build_icl_prompt(ctx)
         )
-
-        # 划分问题场景
-        async for _scene_event in self._run_scene_agent(
-            ctx, UPDATE_USER_CONTENT, SCENE_EXAMPLES_PROMPT
-        ):
-            yield _scene_event
 
         # 清空 Plan 和 MULTI_PLANS
         if check_plan(ctx) == FlowStatusEnum.COMPLETE:

@@ -1,6 +1,5 @@
 from agents.matmaster_agent.flow_agents.expand_agent.constant import EXPAND_AGENT
 from agents.matmaster_agent.flow_agents.intent_agent.constant import INTENT_AGENT
-from agents.matmaster_agent.flow_agents.scene_agent.constant import SCENE_AGENT
 
 # Agent Constants
 MATMASTER_SUPERVISOR_AGENT = 'matmaster_supervisor_agent'
@@ -17,5 +16,4 @@ EXECUTION_TYPE_LABEL_CHANGE_TOOL = '更换工具'
 UNIVERSAL_CONTEXT_FILTER_KEYWORDS = [
     INTENT_AGENT,
     EXPAND_AGENT.replace('_agent', '_schema'),
-    SCENE_AGENT,
 ]
