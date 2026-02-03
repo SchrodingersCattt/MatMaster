@@ -423,12 +423,16 @@ class MatMasterFlowAgent(LlmAgent):
                 f'{ctx.session.id} reasoning_agent failed: {e}, proceed without thinking'
             )
 
+        raw_user_input = ''
+        if ctx.user_content and ctx.user_content.parts:
+            raw_user_input = (ctx.user_content.parts[0].text or '').strip()
         self.plan_make_agent.instruction = get_plan_make_instruction(
             available_tools_with_info_str
             + UPDATE_USER_CONTENT
             + TOOLCHAIN_EXAMPLES_PROMPT,
             thinking_context=thinking_text,
             session_file_summary=session_file_summary,
+            user_original_input=raw_user_input,
         )
         self.plan_make_agent.output_schema = create_dynamic_multi_plans_schema(
             available_tools

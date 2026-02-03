@@ -2,6 +2,7 @@ def get_plan_make_instruction(
     available_tools_with_info: str,
     thinking_context: str = '',
     session_file_summary: str = '',
+    user_original_input: str = '',
 ) -> str:
     session_block = ''
     if session_file_summary:
@@ -20,9 +21,17 @@ CRITICAL: Your plans MUST respect the stages and constraints above:
 - Obey every cross-stage rule: e.g. if the thinking says "如果 Stage xx 选了 xxx，则 Stage yy 就必须 xxx", then any plan where stage xx uses xxx must have stage yy use the required tool(s). Do not output plans that violate these rules.
 - You may still output MULTIPLE alternative plans (different tool choices within the allowed sets, or different order of stages), but every plan must satisfy the stage-wise allowed tools and the cross-stage rules.
 """
+    original_input_block = ''
+    if user_original_input.strip():
+        original_input_block = f"""
+<User original input>
+{user_original_input.strip()}
+
+Use this as the user's literal request; the expanded/clarified task below is for context. Your plans should satisfy both the original intent and the clarified task.
+"""
     return f"""
 You are an AI assistant specialized in creating structured execution plans. Analyze user intent and any provided error logs to break down requests into sequential steps.
-
+{original_input_block}
 <Available Tools With Info>
 {available_tools_with_info}
 {session_block}
