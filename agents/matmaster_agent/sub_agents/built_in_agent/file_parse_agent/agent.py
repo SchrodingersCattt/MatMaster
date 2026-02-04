@@ -12,7 +12,7 @@ from agents.matmaster_agent.sub_agents.built_in_agent.file_parse_agent.prompt im
     FileParseAgentInstruction,
 )
 from agents.matmaster_agent.sub_agents.built_in_agent.file_parse_agent.tools import (
-    file_parse,
+    parse_file,
 )
 
 
@@ -24,7 +24,7 @@ class FileParseAgent(BaseSyncAgentWithToolValidator):
             description='',
             instruction=FileParseAgentInstruction,
             before_tool_callback=check_and_modify_file_url,
-            tools=[file_parse],
+            tools=[parse_file],
         )
 
 

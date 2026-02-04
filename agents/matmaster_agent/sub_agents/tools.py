@@ -8,9 +8,6 @@ from agents.matmaster_agent.prompt import (
 )
 from agents.matmaster_agent.sub_agents.ABACUS_agent.constant import ABACUS_AGENT_NAME
 from agents.matmaster_agent.sub_agents.apex_agent.constant import ApexAgentName
-from agents.matmaster_agent.sub_agents.built_in_agent.file_parse_agent.constant import (
-    FILE_PARSE_AGENT_NAME,
-)
 from agents.matmaster_agent.sub_agents.built_in_agent.llm_tool_agent.constant import (
     TOOL_AGENT_NAME,
 )
@@ -588,7 +585,7 @@ ALL_TOOLS = {
             'Cannot do / Limits: Cannot retrieve from internet; local PDFs only.\n'
             'Cost / Notes: Low.'
         ),
-        'alternative': ['file_parse', 'extract_info_from_webpage'],
+        'alternative': ['parse_file', 'extract_info_from_webpage'],
         'bypass_confirmation': True,
         'self_check': False,
     },
@@ -1167,7 +1164,7 @@ ALL_TOOLS = {
             'Cost / Notes: Low.'
         ),
         'args_setting': '',
-        'alternative': ['file_parse'],
+        'alternative': ['parse_file'],
         'bypass_confirmation': True,
         'self_check': False,
     },
@@ -1183,7 +1180,7 @@ ALL_TOOLS = {
             'Cost / Notes: Low.'
         ),
         'args_setting': '',
-        'alternative': ['file_parse'],
+        'alternative': ['parse_file'],
         'bypass_confirmation': True,
         'self_check': False,
     },
@@ -1748,8 +1745,8 @@ ALL_TOOLS = {
         'alternative': [],
         'self_check': False,
     },
-    'file_parse': {
-        'belonging_agent': FILE_PARSE_AGENT_NAME,
+    'parse_file': {
+        'belonging_agent': DocumentParserAgentName,
         'scene': [SceneEnum.UNIVERSAL],
         'description': (
             'What it does: Parse various file contents to extract key information.\n'

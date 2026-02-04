@@ -6,12 +6,6 @@ from agents.matmaster_agent.sub_agents.ABACUS_agent.agent import (
 from agents.matmaster_agent.sub_agents.ABACUS_agent.constant import ABACUS_AGENT_NAME
 from agents.matmaster_agent.sub_agents.apex_agent.agent import ApexAgent, apex_toolset
 from agents.matmaster_agent.sub_agents.apex_agent.constant import ApexAgentName
-from agents.matmaster_agent.sub_agents.built_in_agent.file_parse_agent.agent import (
-    FileParseAgent,
-)
-from agents.matmaster_agent.sub_agents.built_in_agent.file_parse_agent.constant import (
-    FILE_PARSE_AGENT_NAME,
-)
 from agents.matmaster_agent.sub_agents.built_in_agent.llm_tool_agent.agent import (
     LLMToolAgent,
 )
@@ -356,7 +350,6 @@ AGENT_CLASS_MAPPING = {
     Electron_Microscope_AGENT_NAME: ElectronMicroscopeAgent,
     TOOL_AGENT_NAME: LLMToolAgent,
     Physical_Adsorption_AGENT_NAME: PhysicalAdsorptionAgent,
-    FILE_PARSE_AGENT_NAME: FileParseAgent,
     UniELFAgentName: UniELFAgent,
 }
 
@@ -399,7 +392,6 @@ class MatMasterSubAgentsEnum(str, Enum):
     TPDAgent = TPD_AGENT_NAME
     ElectronMicroscopeAgent = Electron_Microscope_AGENT_NAME
     ToolAgent = TOOL_AGENT_NAME
-    FileParseAgent = FILE_PARSE_AGENT_NAME
     PhysicalAdsorptionAgent = Physical_Adsorption_AGENT_NAME
     UniELFAgentNameEnum = UniELFAgentName
 

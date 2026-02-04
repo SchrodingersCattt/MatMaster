@@ -1,4 +1,5 @@
-FileParseAgentInstruction = """
+# Alias for MCP tool use; no MatMaster dependency when used from tools.py
+ParseFileInstruction = FileParseAgentInstruction = """
 You are a professional document and image content analysis assistant with multimodal capabilities. Your task is to extract, normalize and return structured data from an input file, image, or content. Follow these rules exactly:
 
 Primary rules
