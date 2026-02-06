@@ -245,6 +245,7 @@ class MatMasterFlowAgent(LlmAgent):
             self.plan_make_agent,
             self.analysis_agent,
             self.report_agent,
+            self.thinking_agent,
         ]
 
         return self
@@ -298,6 +299,11 @@ class MatMasterFlowAgent(LlmAgent):
     @property
     def report_agent(self) -> LlmAgent:
         return self._report_agent
+
+    @computed_field
+    @property
+    def thinking_agent(self) -> ThinkingAgent:
+        return self._thinking_agent
 
     def _build_execution_agent_for_plan(
         self, ctx: InvocationContext
